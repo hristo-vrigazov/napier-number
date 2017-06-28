@@ -1,5 +1,6 @@
 package edu.hvrigazov.parallel.parsing;
 
+import java.math.BigInteger;
 import java.util.Map;
 
 import static edu.hvrigazov.parallel.parsing.Options.*;
@@ -30,8 +31,8 @@ public class ParsedOptions {
         return Integer.parseInt(this.get(PRECISION));
     }
 
-    public Integer tasks() {
-        return Integer.parseInt(this.get(TASKS));
+    public BigInteger tasks() {
+        return new BigInteger(this.<String>get(TASKS));
     }
 
     public String output() {

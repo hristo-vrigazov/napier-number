@@ -17,6 +17,7 @@
         <version.docopt>0.6.0.20150202</version.docopt>
         <version.mockito>1.10.19</version.mockito>
         <version.system-rules>1.16.0</version.system-rules>
+        <version.apfloat>1.8.3</version.apfloat>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -57,6 +58,11 @@
             <artifactId>mockito-core</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apfloat</groupId>
+            <artifactId>apfloat</artifactId>
+            <version>${version.apfloat}</version>
         </dependency>
     </dependencies>
 </project>
