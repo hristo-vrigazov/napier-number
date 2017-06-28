@@ -1,0 +1,15 @@
+napier.
+
+    Usage:
+        napier (-h | --help)
+        napier --version
+        napier -p <precision> -t <tasks> -o <output> [-q]
+
+
+    Options:
+        -h --help                       If present, help is shown.
+        --version                       Show version.
+        -p --precision <precision>      The number of summation terms in the series approximation.
+        -t --tasks <tasks>              The maximum number of tasks
+        -o --output <output>            The output file. The result is dumped to this file.
+        -q --quiet                      If set to true, does not output information about thread starting and stopping.
