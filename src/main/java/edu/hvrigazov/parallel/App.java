@@ -1,22 +1,29 @@
 package edu.hvrigazov.parallel;
 
 
+import edu.hvrigazov.parallel.commands.CommandHandler;
+import edu.hvrigazov.parallel.commands.benchmark.BenchmarkCommandHandler;
+import edu.hvrigazov.parallel.commands.compute.ComputeCommandHandler;
 import edu.hvrigazov.parallel.parsing.ParsedOptions;
-import org.apfloat.Apfloat;
-import org.apfloat.ApintMath;
+import edu.hvrigazov.parallel.run.NapierComputation;
 import org.docopt.Docopt;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 /**
  * Main class
  *
  */
 public class App {
+
+    public static class Commands {
+        public final static String COMPUTE = "compute";
+        public final static String BENCHMARK = "benchmark";
+    }
 
     public static void main(String[] args) {
         InputStream inputStream = App.class.getResourceAsStream("/cli-specification.txt");
@@ -29,15 +36,20 @@ public class App {
 
         ParsedOptions parsedOptions = new ParsedOptions(opts);
 
-        double e = 0.0;
+        Map<String, CommandHandler> commandToHandler = getCommands();
+        Optional<String> optionalSelectedCommand = commandToHandler
+                .keySet()
+                .stream()
+                .filter(command -> opts.get(command).equals(true))
+                .findAny();
 
-        long startNano = System.nanoTime();
-        for (int k = 0; k < parsedOptions.precision(); k++) {
-            System.out.println(k);
-            e += (2.0 * k + 1.0) / ApintMath.factorial(2 * k).doubleValue();
-        }
+        optionalSelectedCommand.ifPresent(command -> commandToHandler.get(command).handle(parsedOptions));
+    }
 
-        System.out.println("Elapsed: " + String.valueOf((System.nanoTime() - startNano) / 10.0e9) + " s");
-        System.out.println(e);
+    private static Map<String, CommandHandler> getCommands() {
+        Map<String, CommandHandler> map = new HashMap<>();
+        map.put(Commands.COMPUTE, new ComputeCommandHandler());
+        map.put(Commands.BENCHMARK, new BenchmarkCommandHandler());
+        return map;
     }
 }

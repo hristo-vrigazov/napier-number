@@ -1,10 +1,16 @@
 napier.
 
     Usage:
+        napier compute -p <precision> -t <tasks> -o <output> [-q]
+        napier benchmark -p <precision> -t <tasks> -o <output> [-q]
         napier (-h | --help)
         napier --version
-        napier -p <precision> -t <tasks> -o <output> [-q]
 
+    Commands:
+        compute                         Performs computation by a given number of summation terms,
+                                        maximum number of tasks and output file to dump to.
+        benchmark                       For a given fixed precision, runs computation with tasks from 1 to the given
+                                        maximum number and dumps csv file with the results.
 
     Options:
         -h --help                       If present, help is shown.

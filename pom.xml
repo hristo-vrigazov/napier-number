@@ -19,6 +19,7 @@
         <version.system-rules>1.16.0</version.system-rules>
         <version.apfloat>1.8.3</version.apfloat>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.powermock>1.6.5</version.powermock>
     </properties>
 
     <build>
@@ -63,6 +64,18 @@
             <groupId>org.apfloat</groupId>
             <artifactId>apfloat</artifactId>
             <version>${version.apfloat}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito</artifactId>
+            <version>${version.powermock}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>${version.powermock}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
