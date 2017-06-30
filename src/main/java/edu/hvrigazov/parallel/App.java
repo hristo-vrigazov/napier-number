@@ -1,14 +1,14 @@
 package edu.hvrigazov.parallel;
 
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import edu.hvrigazov.parallel.commands.CommandHandler;
 import edu.hvrigazov.parallel.commands.benchmark.BenchmarkCommandHandler;
 import edu.hvrigazov.parallel.commands.compute.ComputeCommandHandler;
 import edu.hvrigazov.parallel.parsing.ParsedOptions;
-import edu.hvrigazov.parallel.run.NapierComputation;
 import org.docopt.Docopt;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,8 @@ public class App {
 
         ParsedOptions parsedOptions = new ParsedOptions(opts);
 
-        Map<String, CommandHandler> commandToHandler = getCommands();
+        Injector injector = Guice.createInjector(new DefaultDependenciesModule());
+        Map<String, CommandHandler> commandToHandler = getCommands(injector);
         Optional<String> optionalSelectedCommand = commandToHandler
                 .keySet()
                 .stream()
@@ -46,10 +47,10 @@ public class App {
         optionalSelectedCommand.ifPresent(command -> commandToHandler.get(command).handle(parsedOptions));
     }
 
-    private static Map<String, CommandHandler> getCommands() {
+    public static Map<String, CommandHandler> getCommands(Injector injector) {
         Map<String, CommandHandler> map = new HashMap<>();
-        map.put(Commands.COMPUTE, new ComputeCommandHandler());
-        map.put(Commands.BENCHMARK, new BenchmarkCommandHandler());
+        map.put(Commands.COMPUTE, injector.getInstance(ComputeCommandHandler.class));
+        map.put(Commands.BENCHMARK, injector.getInstance(BenchmarkCommandHandler.class));
         return map;
     }
 }

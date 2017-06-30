@@ -1,51 +1,41 @@
 package edu.hvrigazov.parallel.commands.compute;
 
+import com.google.inject.Inject;
 import edu.hvrigazov.parallel.commands.CommandHandler;
 import edu.hvrigazov.parallel.parsing.ParsedOptions;
+import edu.hvrigazov.parallel.run.CompositeNapierComputation;
 import edu.hvrigazov.parallel.run.NapierComputation;
-import edu.hvrigazov.parallel.run.NapierComputationResult;
+import edu.hvrigazov.parallel.suppliers.CompositeNapierComputationSupplier;
+import edu.hvrigazov.parallel.suppliers.RunnablesSchedulerSupplier;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 /**
  * Created by hvrigazov on 29.06.17.
  */
 public class ComputeCommandHandler implements CommandHandler {
+
+    private RunnablesSchedulerSupplier runnablesSchedulerSupplier;
+    private CompositeNapierComputationSupplier compositeNapierComputationSupplier;
+
+    @Inject
+    public ComputeCommandHandler(RunnablesSchedulerSupplier runnablesSchedulerSupplier,
+                                 CompositeNapierComputationSupplier compositeNapierComputationSupplier) {
+        this.runnablesSchedulerSupplier = runnablesSchedulerSupplier;
+        this.compositeNapierComputationSupplier = compositeNapierComputationSupplier;
+    }
+
     @Override
     public void handle(ParsedOptions parsedOptions) {
         System.out.println("compute");
-        RunnablesScheduler runnablesScheduler = new RunnablesScheduler(parsedOptions);
+        RunnablesScheduler runnablesScheduler = runnablesSchedulerSupplier.get(parsedOptions);
         List<NapierComputation> computations = runnablesScheduler.get();
 
-        ExecutorService executorService = Executors.newFixedThreadPool(parsedOptions.tasks());
+        CompositeNapierComputation compositeNapierComputation = compositeNapierComputationSupplier.get(parsedOptions, computations);
         try {
-            List<Future<NapierComputationResult>> futures = executorService.invokeAll(computations);
-
-            BigDecimal result = BigDecimal.ZERO;
-            long maxTimePerComputation = 0;
-            for (Future<NapierComputationResult> future: futures) {
-                NapierComputationResult napierComputationResult = future.get();
-                result = result.add(napierComputationResult.getResult());
-
-                if (napierComputationResult.getExecutionTime() > maxTimePerComputation) {
-                    maxTimePerComputation = napierComputationResult.getExecutionTime();
-                }
-            }
-
-            System.out.println(result);
-            System.out.println(maxTimePerComputation);
-        } catch (InterruptedException | ExecutionException e) {
+            compositeNapierComputation.call();
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-        executorService.shutdown();
     }
 }

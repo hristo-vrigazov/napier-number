@@ -1,8 +1,5 @@
 package edu.hvrigazov.parallel.parsing;
 
-import edu.hvrigazov.parallel.run.NapierComputation;
-
-import java.util.List;
 import java.util.Map;
 
 import static edu.hvrigazov.parallel.parsing.Options.*;
@@ -10,7 +7,7 @@ import static edu.hvrigazov.parallel.parsing.Options.*;
 /**
  * Created by hvrigazov on 28.06.17.
  */
-public class ParsedOptions implements ComputationSettings {
+public class ParsedOptions implements ComputationSettings, CompositeComputationSettings {
 
     private boolean quiet;
     private Integer precision;
@@ -24,6 +21,13 @@ public class ParsedOptions implements ComputationSettings {
         this.output = this.get(opts, OUTPUT);
     }
 
+    public ParsedOptions(boolean quiet, int precision, int tasks, String output) {
+        this.quiet = quiet;
+        this.precision = precision;
+        this.tasks = tasks;
+        this.output = output;
+    }
+
     @Override
     public boolean quiet() {
         return quiet;
@@ -34,6 +38,7 @@ public class ParsedOptions implements ComputationSettings {
         return precision;
     }
 
+    @Override
     public Integer tasks() {
         return tasks;
     }
@@ -43,8 +48,13 @@ public class ParsedOptions implements ComputationSettings {
         return 0;
     }
 
+    @Override
     public String output() {
         return output;
+    }
+
+    public ParsedOptions withTasks(int tasks) {
+        return new ParsedOptions(quiet, precision, tasks, output);
     }
 
     private <T> T get(Map<String, Object> opts, String option) {
