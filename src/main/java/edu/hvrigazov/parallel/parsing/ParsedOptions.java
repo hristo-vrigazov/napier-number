@@ -1,5 +1,8 @@
 package edu.hvrigazov.parallel.parsing;
 
+import edu.hvrigazov.parallel.run.NapierComputation;
+
+import java.util.List;
 import java.util.Map;
 
 import static edu.hvrigazov.parallel.parsing.Options.*;
@@ -31,7 +34,6 @@ public class ParsedOptions implements ComputationSettings {
         return precision;
     }
 
-    @Override
     public Integer tasks() {
         return tasks;
     }
@@ -48,4 +50,5 @@ public class ParsedOptions implements ComputationSettings {
     private <T> T get(Map<String, Object> opts, String option) {
         return (T) opts.get(option);
     }
+
 }

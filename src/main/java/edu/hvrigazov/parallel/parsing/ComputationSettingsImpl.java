@@ -7,13 +7,11 @@ public class ComputationSettingsImpl implements ComputationSettings {
 
     private boolean quiet;
     private Integer to;
-    private Integer tasks;
     private Integer from;
 
-    public ComputationSettingsImpl(boolean quiet, Integer to, Integer tasks, Integer from) {
+    public ComputationSettingsImpl(boolean quiet, Integer from, Integer to) {
         this.quiet = quiet;
         this.to = to;
-        this.tasks = tasks;
         this.from = from;
     }
 
@@ -25,11 +23,6 @@ public class ComputationSettingsImpl implements ComputationSettings {
     @Override
     public Integer to() {
         return to;
-    }
-
-    @Override
-    public Integer tasks() {
-        return tasks;
     }
 
     @Override

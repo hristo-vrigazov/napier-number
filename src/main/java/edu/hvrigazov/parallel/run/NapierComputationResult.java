@@ -7,18 +7,12 @@ import java.math.BigDecimal;
  */
 public class NapierComputationResult {
 
-    private Integer numberOfTasks;
     private long executionTime;
     private BigDecimal result;
 
-    public NapierComputationResult(Integer numberOfTasks, long executionTime, BigDecimal result) {
-        this.numberOfTasks = numberOfTasks;
+    public NapierComputationResult(long executionTime, BigDecimal result) {
         this.executionTime = executionTime;
         this.result = result;
-    }
-
-    public Integer getNumberOfTasks() {
-        return numberOfTasks;
     }
 
     public long getExecutionTime() {
