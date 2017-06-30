@@ -6,10 +6,14 @@ import edu.hvrigazov.parallel.commands.compute.RunnablesScheduler;
 import edu.hvrigazov.parallel.parsing.ParsedOptions;
 import edu.hvrigazov.parallel.run.CompositeNapierComputation;
 import edu.hvrigazov.parallel.run.NapierComputation;
+import edu.hvrigazov.parallel.run.NapierComputationResult;
 import edu.hvrigazov.parallel.suppliers.CompositeNapierComputationSupplier;
 import edu.hvrigazov.parallel.suppliers.ComputationSettingsImplSuppier;
 import edu.hvrigazov.parallel.suppliers.RunnablesSchedulerSupplier;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -32,18 +36,26 @@ public class BenchmarkCommandHandler implements CommandHandler {
     public void handle(ParsedOptions parsedOptions) {
         System.out.println("benchmark");
 
-        for (int i = 1; i <= parsedOptions.tasks(); i++) {
-            System.out.println("Run with number of tasks: " + i);
-            ParsedOptions newParsedOptions = parsedOptions.withTasks(i);
-            RunnablesScheduler runnablesScheduler = runnablesSchedulerSupplier.get(newParsedOptions);
-            List<NapierComputation> computations = runnablesScheduler.get();
+        try {
+            PrintWriter printWriter = new PrintWriter(parsedOptions.output() + "_benchmark.txt", "UTF-8");
+            for (int i = 1; i <= parsedOptions.tasks(); i++) {
+                System.out.println("Run with number of tasks: " + i);
+                ParsedOptions newParsedOptions = parsedOptions.withTasks(i);
+                RunnablesScheduler runnablesScheduler = runnablesSchedulerSupplier.get(newParsedOptions);
+                List<NapierComputation> computations = runnablesScheduler.get();
 
-            CompositeNapierComputation compositeNapierComputation = compositeNapierComputationSupplier.get(newParsedOptions, computations);
-            try {
-                compositeNapierComputation.call();
-            } catch (Exception e) {
-                e.printStackTrace();
+                CompositeNapierComputation compositeNapierComputation = compositeNapierComputationSupplier.get(newParsedOptions, computations);
+                try {
+                    NapierComputationResult napierComputationResult = compositeNapierComputation.call();
+                    printWriter.println(i + "," + napierComputationResult.getExecutionTime());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
+            printWriter.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+
     }
 }
